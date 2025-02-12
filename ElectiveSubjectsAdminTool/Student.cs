@@ -1,12 +1,12 @@
 ﻿namespace ElectiveSubjectsAdminTool
 {
-  public sealed class Student
+  public sealed class Student : Element
   {
     public int Id { get; }
     public string FirstName { get; }
     public string LastName { get; }
 
-    private Student(int id, string firstName, string lastName) {
+    public Student(int id, string firstName, string lastName) {
       Id = id;
       FirstName = firstName;
       LastName = lastName;
@@ -24,8 +24,7 @@
       var lastName = split[1];
       var idText = split[^1];
 
-      if (string.IsNullOrEmpty(firstName) || 
-        string.IsNullOrEmpty(lastName) || 
+      if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) || 
         !int.TryParse(idText, out var id)) {
         student = null;
         return false;
@@ -35,7 +34,7 @@
       return true;
     }
 
-    public void AddToDataGridView(DataGridView view) {
+    public override void AddToDataGridView(DataGridView view) {
       var row = new DataGridViewRow() { Tag = this };
       var idCell = new DataGridViewTextBoxCell() { Value = Id.ToString() };
       var firstNameCell = new DataGridViewTextBoxCell() { Value = FirstName };

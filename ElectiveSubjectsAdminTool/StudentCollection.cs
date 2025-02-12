@@ -2,30 +2,8 @@
 
 namespace ElectiveSubjectsAdminTool
 {
-  public sealed class StudentCollection
+  public sealed class StudentCollection : ElementCollection<Student>
   {
-    private readonly List<Student> _students = new();
-
-    public Student[] Students {
-      get {
-        return _students.ToArray();
-      }
-    }
-
-    public int Count {
-      get {
-        return _students.Count;
-      }
-    }
-
-    public void Add(Student student) {
-      _students.Add(student);
-    }
-
-    public void Remove(Student student) {
-      _students.Remove(student);
-    }
-
     public static bool TryCreateFromCsv(string path, out string? error, out StudentCollection? students) {
       if (string.IsNullOrEmpty(path) ||
         !Path.GetExtension(path).Equals(".csv", StringComparison.OrdinalIgnoreCase)) {
@@ -60,11 +38,9 @@ namespace ElectiveSubjectsAdminTool
     private static bool TryGetLinesFromFile(string path, out string[]? lines, out string? error) {
       var resultLines = Array.Empty<string>();
       error = null;
-      var result = false;
 
       try {
         resultLines = File.ReadAllLines(path);
-        result = true;
       } catch (PathTooLongException) {
         error = "Der Dateipfad ist zu lang.";
       } catch (DirectoryNotFoundException) {
@@ -79,8 +55,13 @@ namespace ElectiveSubjectsAdminTool
         error = "Der Dateipfad ist in keinem bekannten Format.";
       }
 
-      lines = result ? resultLines : null;
-      return result;
+      if (resultLines.Length == 0) {
+        lines = null;
+        return false;
+      }
+
+      lines = resultLines;
+      return true;
     }
 
     private static DataGridViewColumn[] GetDataGridViewColumns() {
@@ -103,13 +84,13 @@ namespace ElectiveSubjectsAdminTool
       };
     }
 
-    public void FillDataGridView(DataGridView view) {
+    public override void FillDataGridView(DataGridView view) {
       view.Columns.Clear();
       view.Columns.AddRange(GetDataGridViewColumns());
 
       view.Rows.Clear();
 
-      foreach (var student in _students) {
+      foreach (var student in _elements) {
         student.AddToDataGridView(view);
       }
     }
