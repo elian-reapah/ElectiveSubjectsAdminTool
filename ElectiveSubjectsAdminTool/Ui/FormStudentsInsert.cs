@@ -14,15 +14,21 @@
     }
 
     private void ButtonChooseFile_Click(object sender, EventArgs e) {
-      var fileDialogue = new OpenFileDialog();
-      fileDialogue.RestoreDirectory = true;
-      fileDialogue.Filter = "CSV-Dateien (*.csv)|*.csv|Alle Dateien (*.*)|*.*";
-      fileDialogue.Multiselect = false;
+      DialogResult? dialogueResult = null;
+      var path = string.Empty;
 
-      if (fileDialogue.ShowDialog() == DialogResult.OK) {
-        if (StudentCollection.TryCreateFromCsv(fileDialogue.FileName, out var error, out var students)) {
+      using (var fileDialogue = new OpenFileDialog()) {
+        fileDialogue.RestoreDirectory = true;
+        fileDialogue.Filter = "CSV-Dateien (*.csv)|*.csv|Alle Dateien (*.*)|*.*";
+        fileDialogue.Multiselect = false;
+        dialogueResult = fileDialogue.ShowDialog();
+        path = fileDialogue.FileName;
+      }
+
+      if (dialogueResult == DialogResult.OK) {
+        if (StudentCollection.TryCreateFromCsv(path, out var error, out var students)) {
           _students = students;
-          SetLabelTexts(fileDialogue.FileName);
+          SetLabelTexts(path);
         } else {
           MessageBox.Show(error, "Achtung!", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }

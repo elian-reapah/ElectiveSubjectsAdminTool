@@ -19,5 +19,6 @@
     }
 
     public abstract void FillDataGridView(DataGridView view);
+    public abstract string[] GetAsJsonLines(int indentLevel);
   }
 }

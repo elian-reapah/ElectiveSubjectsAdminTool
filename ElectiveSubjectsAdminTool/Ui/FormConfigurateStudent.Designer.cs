@@ -33,6 +33,8 @@
       TextBoxLastName = new TextBox();
       ButtonAccept = new Button();
       ButtonCancel = new Button();
+      LabelJobType = new Label();
+      ComboBoxJobType = new ComboBox();
       SuspendLayout();
       // 
       // LabelId
@@ -85,7 +87,7 @@
       // 
       // ButtonAccept
       // 
-      ButtonAccept.Location = new Point(12, 125);
+      ButtonAccept.Location = new Point(12, 173);
       ButtonAccept.Name = "ButtonAccept";
       ButtonAccept.Size = new Size(94, 29);
       ButtonAccept.TabIndex = 6;
@@ -95,7 +97,7 @@
       // 
       // ButtonCancel
       // 
-      ButtonCancel.Location = new Point(205, 125);
+      ButtonCancel.Location = new Point(205, 173);
       ButtonCancel.Name = "ButtonCancel";
       ButtonCancel.Size = new Size(94, 29);
       ButtonCancel.TabIndex = 7;
@@ -103,13 +105,33 @@
       ButtonCancel.UseVisualStyleBackColor = true;
       ButtonCancel.Click += ButtonCancel_Click;
       // 
+      // LabelJobType
+      // 
+      LabelJobType.AutoSize = true;
+      LabelJobType.Location = new Point(48, 117);
+      LabelJobType.Name = "LabelJobType";
+      LabelJobType.Size = new Size(44, 20);
+      LabelJobType.TabIndex = 8;
+      LabelJobType.Text = "Beruf";
+      // 
+      // ComboBoxJobType
+      // 
+      ComboBoxJobType.DropDownStyle = ComboBoxStyle.DropDownList;
+      ComboBoxJobType.FormattingEnabled = true;
+      ComboBoxJobType.Location = new Point(117, 114);
+      ComboBoxJobType.Name = "ComboBoxJobType";
+      ComboBoxJobType.Size = new Size(182, 28);
+      ComboBoxJobType.TabIndex = 9;
+      // 
       // FormConfigurateStudent
       // 
       AcceptButton = ButtonAccept;
       AutoScaleDimensions = new SizeF(8F, 20F);
       AutoScaleMode = AutoScaleMode.Font;
       CancelButton = ButtonCancel;
-      ClientSize = new Size(311, 166);
+      ClientSize = new Size(311, 214);
+      Controls.Add(ComboBoxJobType);
+      Controls.Add(LabelJobType);
       Controls.Add(ButtonCancel);
       Controls.Add(ButtonAccept);
       Controls.Add(TextBoxLastName);
@@ -123,6 +145,7 @@
       MinimizeBox = false;
       Name = "FormConfigurateStudent";
       Text = "Schüler anlegen";
+      Load += FormConfigurateStudent_Load;
       ResumeLayout(false);
       PerformLayout();
     }
@@ -137,5 +160,7 @@
     private TextBox TextBoxLastName;
     private Button ButtonAccept;
     private Button ButtonCancel;
+    private Label LabelJobType;
+    private ComboBox ComboBoxJobType;
   }
 }

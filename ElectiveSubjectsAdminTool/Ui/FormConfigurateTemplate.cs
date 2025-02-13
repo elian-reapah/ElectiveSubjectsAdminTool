@@ -13,7 +13,9 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void FormConfigurateSubjects_Load(object sender, EventArgs e) {
-
+      _students.FillDataGridView(DataGridViewStudents);
+      _subjects.FillDataGridView(DataGridViewSubjects);
+      EnableButtons();
     }
 
     private void EnableButtons() {
@@ -23,11 +25,17 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void ButtonAddStudent_Click(object sender, EventArgs e) {
-      var dialogue = new FormConfigurateStudent();
-      dialogue.StartPosition = FormStartPosition.CenterParent;
+      Student? student = null;
 
-      if (dialogue.ShowDialog() == DialogResult.OK) {
-        var student = dialogue.GetStudent();
+      using (var dialogue = new FormConfigurateStudent()) {
+        dialogue.StartPosition = FormStartPosition.CenterParent;
+
+        if (dialogue.ShowDialog() == DialogResult.OK) {
+          student = dialogue.GetStudent();
+        }
+      }
+
+      if (student is not null) {
         _students.Add(student);
         _students.FillDataGridView(DataGridViewStudents);
         SelectElement<Student>(student, DataGridViewStudents);
@@ -47,11 +55,17 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void ButtonAddSubject_Click(object sender, EventArgs e) {
-      var dialogue = new FormConfigurateSubject();
-      dialogue.StartPosition = FormStartPosition.CenterParent;
+      Subject? subject = null;
 
-      if (dialogue.ShowDialog() == DialogResult.OK) {
-        var subject = dialogue.GetSubject();
+      using (var dialogue = new FormConfigurateSubject()) {
+        dialogue.StartPosition = FormStartPosition.CenterParent;
+
+        if (dialogue.ShowDialog() == DialogResult.OK) {
+          subject = dialogue.GetSubject();
+        }
+      }
+
+      if (subject is not null) {
         _subjects.Add(subject);
         _subjects.FillDataGridView(DataGridViewSubjects);
         SelectElement<Subject>(subject, DataGridViewSubjects);
@@ -61,7 +75,16 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void ButtonRemoveSubject_Click(object sender, EventArgs e) {
+      foreach (DataGridViewRow row in DataGridViewSubjects.SelectedRows) {
+        if (row.Tag is not Subject subject) {
+          throw new InvalidCastException("In dieser Zeile war kein Fach-Objekt.");
+        }
 
+        _subjects.Remove(subject);
+      }
+
+      _subjects.FillDataGridView(DataGridViewSubjects);
+      EnableButtons();
     }
 
     private void ButtonCreateTemplate_Click(object sender, EventArgs e) {
@@ -73,7 +96,81 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void ButtonCancel_Click(object sender, EventArgs e) {
+      DialogResult = DialogResult.Cancel;
+      Close();
+    }
 
+    private void ButtonRemoveStudent_Click(object sender, EventArgs e) {
+      foreach (DataGridViewRow row in DataGridViewStudents.SelectedRows) {
+        if (row.Tag is not Student student) {
+          throw new InvalidCastException("In dieser Zeile war kein Schüler-Objekt.");
+        }
+
+        _students.Remove(student);
+      }
+
+      _students.FillDataGridView(DataGridViewStudents);
+      EnableButtons();
+    }
+
+    private void ButtonSaveSubjects_Click(object sender, EventArgs e) {
+      var now = DateTime.Now;
+      string? folderPath = null;
+
+      using (var dialogue = new FolderBrowserDialog()) {
+        dialogue.Multiselect = false;
+
+        if (dialogue.ShowDialog() == DialogResult.OK) {
+          folderPath = dialogue.SelectedPath;
+        }
+      }
+
+      if (folderPath is not null) {
+        var fileName = "wahlpflichtfaecher_" + now.ToString("dd_MM_yyyy") + ".json";
+        var path = Path.Combine(folderPath, fileName);
+
+        if (FileHelp.TryCreateJsonFile(path, _subjects.GetAsJsonLines(1), out var error)) {
+          MessageBox.Show("Die Datei: " + fileName + " wurde erfolgreich gespeichert unter: " + path,
+          "Erfolgreich gespeichert",
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Information);
+        } else {
+          MessageBox.Show(error,
+          "Speichern fehlgeschlagen",
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Error);
+        }
+      }
+
+      EnableButtons();
+    }
+
+    private void ButtonLoadSubjects_Click(object sender, EventArgs e) {
+      var messageBoxDialogueResult = DialogResult.Yes;
+      
+      if (_subjects.Count > 0) {
+        messageBoxDialogueResult = MessageBox.Show("Es werden alle bisherigen Fächer gelöscht. Trotzdem fortfahren?",
+        "Achtung!",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Warning);
+      }
+
+      if (messageBoxDialogueResult == DialogResult.Yes) {
+        DialogResult? dialogueResult = null;
+        var path = string.Empty;
+
+        using (var fileDialogue = new OpenFileDialog()) {
+          fileDialogue.RestoreDirectory = true;
+          fileDialogue.Filter = "Json-Dateien (*.json)|*.json|Alle Dateien (*.*)|*.*";
+          fileDialogue.Multiselect = false;
+          dialogueResult = fileDialogue.ShowDialog();
+          path = fileDialogue.FileName;
+        }
+
+
+      }
+
+      EnableButtons();
     }
   }
 }

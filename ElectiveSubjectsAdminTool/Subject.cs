@@ -10,16 +10,12 @@
       Description = description;
     }
 
-    private string GetShortDescription() {
-      return Description.Substring(0, 100) + "...";
-    }
-
     public override void AddToDataGridView(DataGridView view) {
       var row = new DataGridViewRow() { Tag = this };
       var nameCell = new DataGridViewTextBoxCell() { Value = Name };
 
       var descriptionCell = new DataGridViewTextBoxCell() { 
-        Value = GetShortDescription(),
+        Value = Description.Substring(0, 100) + "...",
         ToolTipText = Description,
       };
       
@@ -30,6 +26,15 @@
       descriptionCell.ReadOnly = true;
       
       view.Rows.Add(row);
+    }
+
+    public string[] GetAsJsonLines(int indentLevel) {
+      return new[] { 
+        Common.GetIndentString(indentLevel) + "{",
+        Common.GetIndentString(indentLevel + 1) + "\"name\": \"" + Name + "\"",
+        Common.GetIndentString(indentLevel + 1) + "\"description\": \"" + Description + "\"",
+        Common.GetIndentString(indentLevel) + "},",
+      };
     }
   }
 }
