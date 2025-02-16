@@ -10,6 +10,12 @@
       }
     }
 
+    public T[] Elements {
+      get {
+        return _elements.ToArray();
+      }
+    }
+
     public void Add(T element) {
       _elements.Add(element);
     }
@@ -19,6 +25,5 @@
     }
 
     public abstract void FillDataGridView(DataGridView view);
-    public abstract string[] GetAsJsonLines(int indentLevel);
   }
 }

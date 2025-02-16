@@ -1,4 +1,6 @@
-﻿namespace ElectiveSubjectsAdminTool
+﻿using System.Text.Json.Nodes;
+
+namespace ElectiveSubjectsAdminTool
 {
   public sealed class Subject : Element
   {
@@ -31,10 +33,23 @@
     public string[] GetAsJsonLines(int indentLevel) {
       return new[] { 
         Common.GetIndentString(indentLevel) + "{",
-        Common.GetIndentString(indentLevel + 1) + "\"name\": \"" + Name + "\"",
+        Common.GetIndentString(indentLevel + 1) + "\"name\": \"" + Name + "\",",
         Common.GetIndentString(indentLevel + 1) + "\"description\": \"" + Description + "\"",
         Common.GetIndentString(indentLevel) + "},",
       };
+    }
+
+    public static bool TryGetFromJsonNode(JsonNode node, out Subject? subject) {
+      var name = node["name"];
+      var description = node["description"];
+
+      if (name is null || description is null) {
+        subject = null;
+        return false;
+      }
+
+      subject = new Subject(name.GetValue<string>(), description.GetValue<string>());
+      return true;
     }
   }
 }

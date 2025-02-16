@@ -4,8 +4,34 @@ namespace ElectiveSubjectsAdminTool
 {
   public sealed class SubjectCollection : ElementCollection<Subject>
   {
-    public static SubjectCollection LoadFromJsonNode(JsonNode root) {
+    public static bool TryLoadFromJson(string path, out SubjectCollection? subjects) {
+      var root = FileHelp.GetJsonFromFile(path);
 
+      if (root is null) {
+        subjects = null;
+        return false;
+      }
+
+      var rootObject = root.AsObject();
+
+      if (!rootObject.ContainsKey("subjects")) {
+        subjects = null;
+        return false;
+      }
+
+      var result = new SubjectCollection();
+
+      foreach (var node in rootObject.AsArray()) {
+        if (node is not null && 
+          Subject.TryGetFromJsonNode(node, out var subject)) {
+          ArgumentNullException.ThrowIfNull(subject);
+
+          result.Add(subject);
+        }
+      }
+
+      subjects = result;
+      return true;
     }
 
     public override void FillDataGridView(DataGridView view) {
@@ -33,7 +59,7 @@ namespace ElectiveSubjectsAdminTool
       }
     }
 
-    public override string[] GetAsJsonLines(int indentLevel) {
+    public string[] GetAsJsonLines(int indentLevel, bool isOnlyElement) {
       var result = new List<string>();
       result.Add(Common.GetIndentString(indentLevel) + "subjects: [");
 
@@ -41,7 +67,13 @@ namespace ElectiveSubjectsAdminTool
         result.AddRange(subject.GetAsJsonLines(indentLevel + 1));
       }
 
-      result.Add(Common.GetIndentString(indentLevel) + "],");
+      var text = Common.GetIndentString(indentLevel) + "]";
+
+      if (!isOnlyElement) {
+        text += ",";
+      }
+
+      result.Add(text);
       return result.ToArray();
     }
   }

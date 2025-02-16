@@ -4,7 +4,7 @@ namespace ElectiveSubjectsAdminTool
 {
   public partial class FormConfigurateTemplate : Form
   {
-    private readonly SubjectCollection _subjects = new();
+    private SubjectCollection _subjects = new();
     private readonly StudentCollection _students;
 
     public FormConfigurateTemplate(StudentCollection students) {
@@ -19,9 +19,10 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void EnableButtons() {
-      ButtonCreateTemplate.Enabled = _subjects.Count > 0;
+      ButtonCreateTemplate.Enabled = _subjects.Count > 0 && _students.Count > 0;
       ButtonRemoveStudent.Enabled = DataGridViewStudents.SelectedRows.Count > 0;
       ButtonRemoveSubject.Enabled = DataGridViewSubjects.SelectedRows.Count > 0;
+      ButtonSaveSubjects.Enabled = _subjects.Count > 0;
     }
 
     private void ButtonAddStudent_Click(object sender, EventArgs e) {
@@ -88,7 +89,38 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void ButtonCreateTemplate_Click(object sender, EventArgs e) {
+      CreateJsonFile(Template.CreateJsonLines(_students, _subjects), "web_vorlage");
+      EnableButtons();
+    }
 
+    private static void CreateJsonFile(string[] jsonLines, string fileName) {
+      var now = DateTime.Now;
+      string? folderPath = null;
+
+      using (var dialogue = new FolderBrowserDialog()) {
+        dialogue.Multiselect = false;
+
+        if (dialogue.ShowDialog() == DialogResult.OK) {
+          folderPath = dialogue.SelectedPath;
+        }
+      }
+
+      if (folderPath is not null) {
+        var file = fileName + "_" + now.ToString("dd_MM_yyyy") + ".json";
+        var path = Path.Combine(folderPath, file);
+
+        if (FileHelp.TryCreateJsonFile(path, jsonLines, out var error)) {
+          MessageBox.Show("Die Datei: " + file + " wurde erfolgreich gespeichert unter: " + path,
+          "Erfolgreich gespeichert",
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Information);
+        } else {
+          MessageBox.Show(error,
+          "Speichern fehlgeschlagen",
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Error);
+        }
+      }
     }
 
     private void ButtonLoadSelectionResults_Click(object sender, EventArgs e) {
@@ -114,34 +146,7 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void ButtonSaveSubjects_Click(object sender, EventArgs e) {
-      var now = DateTime.Now;
-      string? folderPath = null;
-
-      using (var dialogue = new FolderBrowserDialog()) {
-        dialogue.Multiselect = false;
-
-        if (dialogue.ShowDialog() == DialogResult.OK) {
-          folderPath = dialogue.SelectedPath;
-        }
-      }
-
-      if (folderPath is not null) {
-        var fileName = "wahlpflichtfaecher_" + now.ToString("dd_MM_yyyy") + ".json";
-        var path = Path.Combine(folderPath, fileName);
-
-        if (FileHelp.TryCreateJsonFile(path, _subjects.GetAsJsonLines(1), out var error)) {
-          MessageBox.Show("Die Datei: " + fileName + " wurde erfolgreich gespeichert unter: " + path,
-          "Erfolgreich gespeichert",
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Information);
-        } else {
-          MessageBox.Show(error,
-          "Speichern fehlgeschlagen",
-          MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-        }
-      }
-
+      CreateJsonFile(_subjects.GetAsJsonLines(1, true), "wahlpflichtfaecher");
       EnableButtons();
     }
 
@@ -167,7 +172,24 @@ namespace ElectiveSubjectsAdminTool
           path = fileDialogue.FileName;
         }
 
+        if (Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase)) {
+          if (SubjectCollection.TryLoadFromJson(path, out var subjects)) {
+            ArgumentNullException.ThrowIfNull(subjects);
 
+            _subjects = subjects;
+            _subjects.FillDataGridView(DataGridViewSubjects);
+          } else {
+            MessageBox.Show("Die Json-Datei konnte nicht verarbeitet werden.",
+              "Achtung!",
+              MessageBoxButtons.OK,
+              MessageBoxIcon.Error);
+          }
+        } else { 
+          MessageBox.Show("Es handelt sich nicht um eine Json-Datei.", 
+            "Achtung!", 
+            MessageBoxButtons.OK, 
+            MessageBoxIcon.Error);
+        }
       }
 
       EnableButtons();
