@@ -124,7 +124,8 @@ namespace ElectiveSubjectsAdminTool
     }
 
     private void ButtonLoadSelectionResults_Click(object sender, EventArgs e) {
-
+      DialogResult = DialogResult.Continue;
+      Close();
     }
 
     private void ButtonCancel_Click(object sender, EventArgs e) {
@@ -193,6 +194,14 @@ namespace ElectiveSubjectsAdminTool
       }
 
       EnableButtons();
+    }
+
+    public StudentCollection GetStudents() {
+      return _students;
+    }
+
+    public SubjectCollection GetSubjects() {
+      return _subjects;
     }
   }
 }

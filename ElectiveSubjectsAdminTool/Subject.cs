@@ -30,12 +30,18 @@ namespace ElectiveSubjectsAdminTool
       view.Rows.Add(row);
     }
 
-    public string[] GetAsJsonLines(int indentLevel) {
+    public string[] GetAsJsonLines(int indentLevel, bool isLastElement) {
+      var lastLine = Common.GetIndentString(indentLevel) + "}";
+
+      if (!isLastElement) {
+        lastLine += ",";
+      }
+
       return new[] { 
         Common.GetIndentString(indentLevel) + "{",
         Common.GetIndentString(indentLevel + 1) + "\"name\": \"" + Name + "\",",
         Common.GetIndentString(indentLevel + 1) + "\"description\": \"" + Description + "\"",
-        Common.GetIndentString(indentLevel) + "},",
+        lastLine,
       };
     }
 

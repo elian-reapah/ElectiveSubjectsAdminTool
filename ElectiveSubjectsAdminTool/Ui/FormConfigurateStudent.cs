@@ -34,7 +34,7 @@
     }
 
     private JobType GetSelectedJobType() {
-      if (ComboBoxJobType.SelectedItem is not ComboBoxItem item) {
+      if (ComboBoxJobType.SelectedItem is not ComboBoxItem<JobType> item) {
         throw new InvalidCastException();
       }
 
@@ -73,22 +73,8 @@
     private void FormConfigurateStudent_Load(object sender, EventArgs e) {
       foreach (var type in Enum.GetValues<JobType>()) {
         if (type != JobType.None) {
-          ComboBoxJobType.Items.Add(new ComboBoxItem(Common.GetJobTypeShowText(type), type));
+          ComboBoxJobType.Items.Add(new ComboBoxItem<JobType>(Common.GetJobTypeShowText(type), type));
         }
-      }
-    }
-
-    private sealed class ComboBoxItem { 
-      public string Text { get; }
-      public JobType Tag { get; }
-
-      public ComboBoxItem(string text, JobType tag) {
-        Text = text;
-        Tag = tag;
-      }
-
-      public override string ToString() {
-        return Text;
       }
     }
   }

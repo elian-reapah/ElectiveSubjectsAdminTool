@@ -63,8 +63,8 @@ namespace ElectiveSubjectsAdminTool
       var result = new List<string>();
       result.Add(Common.GetIndentString(indentLevel) + "subjects: [");
 
-      foreach (var subject in _elements) {
-        result.AddRange(subject.GetAsJsonLines(indentLevel + 1));
+      for (var i = 0; i < _elements.Count; i++) {
+        result.AddRange(_elements[i].GetAsJsonLines(indentLevel + 1, i == _elements.Count - 1));
       }
 
       var text = Common.GetIndentString(indentLevel) + "]";

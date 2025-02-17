@@ -1,5 +1,4 @@
 ﻿using System.Security;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace ElectiveSubjectsAdminTool
@@ -35,13 +34,8 @@ namespace ElectiveSubjectsAdminTool
       return true;
     }
 
-    public static bool TryCreateJsonFile(string path, string[] jsonLines, out string? error) {
+    public static bool TryCreateFile(string path, string[] lines, out string? error) {
       error = null;
-      
-      var lines = new List<string>();
-      lines.Add("{");
-      lines.AddRange(jsonLines);
-      lines.Add("}");
 
       try {
         File.AppendAllLines(path, lines);
@@ -62,10 +56,19 @@ namespace ElectiveSubjectsAdminTool
       return error is null;
     }
 
+    public static bool TryCreateJsonFile(string path, string[] jsonLines, out string? error) {
+      var lines = new List<string>();
+      lines.Add("{");
+      lines.AddRange(jsonLines);
+      lines.Add("}");
+
+      return TryCreateFile(path, lines.ToArray(), out error);
+    }
+
     public static JsonNode? GetJsonFromFile(string path) {
       using (var stream = File.OpenRead(path)) {
         return JsonNode.Parse(stream);
       }
-    }     
+    }
   }
 }
