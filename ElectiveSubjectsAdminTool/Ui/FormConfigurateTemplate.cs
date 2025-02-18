@@ -123,11 +123,6 @@ namespace ElectiveSubjectsAdminTool
       }
     }
 
-    private void ButtonLoadSelectionResults_Click(object sender, EventArgs e) {
-      DialogResult = DialogResult.Continue;
-      Close();
-    }
-
     private void ButtonCancel_Click(object sender, EventArgs e) {
       DialogResult = DialogResult.Cancel;
       Close();

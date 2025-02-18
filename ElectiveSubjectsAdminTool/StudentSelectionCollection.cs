@@ -11,16 +11,6 @@
         },
         new DataGridViewColumn() {
           CellTemplate = new DataGridViewTextBoxCell(),
-          HeaderText = "Vorname",
-          ReadOnly = true,
-        },
-        new DataGridViewColumn() {
-          CellTemplate = new DataGridViewTextBoxCell(),
-          HeaderText = "Nachname",
-          ReadOnly = true,
-        },
-        new DataGridViewColumn() {
-          CellTemplate = new DataGridViewTextBoxCell(),
           HeaderText = "1. Wahl",
           ReadOnly = true,
         },
@@ -50,13 +40,11 @@
 
     public string[] GetAsCsvLines() {
       var result = new List<string>();
-      result.Add("ID;Vorname;Nachname;Erste Wahl;Zweite Wahl;Dritte Wahl");
+      result.Add("ID;Erste Wahl;Zweite Wahl;Dritte Wahl");
 
       foreach (var selection in _elements) {
         var row = new[] {
-          selection.Student.Id.ToString(),
-          selection.Student.FirstName,
-          selection.Student.LastName,
+          selection.Id.ToString(),
           selection.FirstChoice.Name,
           selection.SecondChoice.Name,
           selection.ThirdChoice.Name
@@ -66,6 +54,35 @@
       }
 
       return result.ToArray();
+    }
+
+    public static bool TryLoadFromJson(string path, Dictionary<int, Subject> subjects, out StudentSelectionCollection? selections) {
+      var root = FileHelp.GetJsonFromFile(path);
+
+      if (root is null) {
+        selections = null;
+        return false;
+      }
+
+      var rootObject = root.AsObject();
+
+      if (!rootObject.ContainsKey("studentList")) {
+        selections = null;
+        return false;
+      }
+
+      var result = new StudentSelectionCollection();
+
+      foreach (var node in rootObject.AsArray()) {
+        if (node is not null &&
+          StudentSelection.TryGetFromJson(node, subjects, out var selection)) {
+          ArgumentNullException.ThrowIfNull(selection);
+          result.Add(selection);
+        }
+      }
+
+      selections = result;
+      return true;
     }
   }
 }

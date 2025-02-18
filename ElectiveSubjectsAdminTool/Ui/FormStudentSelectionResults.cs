@@ -2,13 +2,11 @@
 {
   public partial class FormStudentSelectionResults : Form
   {
-    private readonly StudentSelectionCollection _selections;
-    private readonly SubjectCollection _subjects;
+    private StudentSelectionCollection? _selections;
+    private SubjectCollection? _subjects;
 
-    public FormStudentSelectionResults(StudentSelectionCollection selections, SubjectCollection subjects) {
+    public FormStudentSelectionResults() {
       InitializeComponent();
-      _selections = selections;
-      _subjects = subjects;
     }
 
     private void ButtonAlgorithm_Click(object sender, EventArgs e) {
@@ -46,10 +44,19 @@
     }
 
     private void EnableButtons() {
-      ButtonEdit.Enabled = DataGridViewSelections.SelectedRows.Count == 1;
+      ButtonEdit.Enabled = _selections is not null && 
+        _subjects is not null && 
+        DataGridViewSelections.SelectedRows.Count == 1;
+
+      ButtonExport.Enabled = _selections is not null && 
+        _subjects is not null && 
+        _selections.Count > 0;
     }
 
     private void ButtonEdit_Click(object sender, EventArgs e) {
+      ArgumentNullException.ThrowIfNull(_selections);
+      ArgumentNullException.ThrowIfNull(_subjects);
+
       var row = DataGridViewSelections.SelectedRows[0];
 
       if (row.Tag is not StudentSelection selection) {
@@ -79,6 +86,37 @@
     }
 
     private void DataGridViewSelections_SelectionChanged(object sender, EventArgs e) {
+      EnableButtons();
+    }
+
+    private void LoadSelectionFile() {
+      DialogResult? dialogueResult = null;
+      var path = string.Empty;
+
+      using (var fileDialogue = new OpenFileDialog()) {
+        fileDialogue.RestoreDirectory = true;
+        fileDialogue.Filter = "JSON-Dateien (*.json)|*.json|Alle Dateien (*.*)|*.*";
+        fileDialogue.Multiselect = false;
+        dialogueResult = fileDialogue.ShowDialog();
+        path = fileDialogue.FileName;
+      }
+
+      if (dialogueResult == DialogResult.OK) {
+        if (StudentSelectionCollection(path, out var error, out var students)) {
+          _students = students;
+          SetLabelTexts(path);
+        } else {
+          MessageBox.Show(error, "Achtung!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+      } else {
+        MessageBox.Show("Die Auswahl der Datei wurde abgebrochen.",
+          "Vorgang abgebrochen",
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Information);
+
+        SetLabelTexts(null);
+      }
+
       EnableButtons();
     }
 

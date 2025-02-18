@@ -7,31 +7,37 @@ namespace ElectiveSubjectsAdminTool
     [STAThread]
     public static void Main() {
       ApplicationConfiguration.Initialize();
-      StudentCollection? students = null;
 
-      using (var dialogue = new FormStudentsInsert()) {
-        if (dialogue.ShowDialog() == DialogResult.OK) {
-          students = dialogue.GetStudents();
-        }
+      var continueType = DialogueContinueType.None;
+
+      using (var dialogue = new FormStart()) {
+        _ = dialogue.ShowDialog();
+        continueType = dialogue.GetDialogueContinueType();
       }
 
-      SubjectCollection? subjects = null;
+      switch (continueType) {
+        case DialogueContinueType.GenerateTemplate:
+          GenerateTemplate();
+          break;
 
-      if (students is not null) {
-        using (var dialogue = new FormConfigurateTemplate(students)) {
-          if (dialogue.ShowDialog() == DialogResult.Continue) {
-            students = dialogue.GetStudents();
-            subjects = dialogue.GetSubjects();
-          }
-        }
-      }
+        case DialogueContinueType.SelectionResults:
+          SelectionResults();
+          break;
 
-      if (subjects is not null) {
-        // Selection Collection hier per Json erstellen
-        using (var dialogue = new FormStudentSelectionResults(null, subjects)) {
-          dialogue.ShowDialog();
-        }
+        case DialogueContinueType.None:
+          break;
+
+        default:
+          throw new InvalidOperationException("Es handelt sich um einen unbekannten Dialog-Typ.");
       }
+    }
+
+    private static void GenerateTemplate() { 
+      using (var)
+    }
+
+    private static void SelectionResults() { 
+    
     }
   }
 }

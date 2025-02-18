@@ -34,27 +34,38 @@ namespace ElectiveSubjectsAdminTool
       return true;
     }
 
+    private static DataGridViewColumn[] GetColumns() {
+      return new[] {
+        new DataGridViewColumn() {
+          CellTemplate = new DataGridViewTextBoxCell(),
+          HeaderText = "Name",
+          ReadOnly = true,
+        },
+        new DataGridViewColumn() {
+          CellTemplate = new DataGridViewTextBoxCell(),
+          HeaderText = "Beschreibung",
+          ReadOnly = true,
+        },
+        new DataGridViewColumn() {
+          CellTemplate = new DataGridViewTextBoxCell(),
+          HeaderText = "Hinweis",
+          ReadOnly = true,
+        },
+        new DataGridViewColumn() {
+          CellTemplate = new DataGridViewTextBoxCell(),
+          HeaderText = "Lehrer",
+          ReadOnly = true,
+        },
+      };
+    }
+
     public override void FillDataGridView(DataGridView view) {
       view.Columns.Clear();
-
-      var nameColumn = new DataGridViewColumn() {
-        CellTemplate = new DataGridViewTextBoxCell(),
-        HeaderText = "Name",
-        ReadOnly = true,
-      };
-
-      var descriptionColumn = new DataGridViewColumn() {
-        CellTemplate = new DataGridViewTextBoxCell(),
-        HeaderText = "Beschreibung",
-        ReadOnly = true,
-      };
-
-      view.Columns.Add(nameColumn);
-      view.Columns.Add(descriptionColumn);
+      view.Columns.AddRange(GetColumns());
 
       view.Rows.Clear();
 
-      foreach (var subject in _elements) {
+      foreach (var subject in _elements) {;
         subject.AddToDataGridView(view);
       }
     }

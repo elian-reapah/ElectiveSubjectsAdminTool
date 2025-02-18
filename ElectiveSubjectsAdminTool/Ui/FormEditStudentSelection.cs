@@ -15,11 +15,7 @@
     }
 
     private void FormEditStudentSelection_Load(object sender, EventArgs e) {
-      LabelStudentId.Text = "ID: " + _selection.Student.Id.ToString();
-      LabelStudentFirstName.Text = "Vorname: " + _selection.Student.FirstName;
-      LabelStudentLastName.Text = "Nachname: " + _selection.Student.LastName;
-      LabelStudenJobType.Text = "Beruf: " + Common.GetJobTypeShowText(_selection.Student.JobType);
-
+      LabelId.Text = "ID: " + _selection.Id.ToString();
       FillComboBoxes();
     }
 
@@ -53,7 +49,7 @@
       ArgumentNullException.ThrowIfNull(_newSecondChoice);
       ArgumentNullException.ThrowIfNull(_newThirdChoice);
 
-      return new StudentSelection(_selection.Student,
+      return new StudentSelection(_selection.Id,
         _newFirstChoice,
         _newSecondChoice,
         _newThirdChoice);

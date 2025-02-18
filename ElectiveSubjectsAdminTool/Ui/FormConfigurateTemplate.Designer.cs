@@ -31,6 +31,8 @@
       TableLayoutPanelSubjectButtons = new TableLayoutPanel();
       ButtonAddSubject = new Button();
       ButtonRemoveSubject = new Button();
+      ButtonSaveSubjects = new Button();
+      ButtonLoadSubjects = new Button();
       TableLayoutPanelStudents = new TableLayoutPanel();
       DataGridViewStudents = new DataGridView();
       TableLayoutPanelStudentButtons = new TableLayoutPanel();
@@ -38,10 +40,7 @@
       ButtonRemoveStudent = new Button();
       TableLayoutPanelGeneralButtons = new TableLayoutPanel();
       ButtonCreateTemplate = new Button();
-      ButtonLoadSelectionResults = new Button();
       ButtonCancel = new Button();
-      ButtonSaveSubjects = new Button();
-      ButtonLoadSubjects = new Button();
       TableLayoutPanelMain.SuspendLayout();
       TableLayoutPanelSubjects.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)DataGridViewSubjects).BeginInit();
@@ -143,6 +142,28 @@
       ButtonRemoveSubject.UseVisualStyleBackColor = true;
       ButtonRemoveSubject.Click += ButtonRemoveSubject_Click;
       // 
+      // ButtonSaveSubjects
+      // 
+      ButtonSaveSubjects.Dock = DockStyle.Fill;
+      ButtonSaveSubjects.Location = new Point(3, 113);
+      ButtonSaveSubjects.Name = "ButtonSaveSubjects";
+      ButtonSaveSubjects.Size = new Size(151, 49);
+      ButtonSaveSubjects.TabIndex = 2;
+      ButtonSaveSubjects.Text = "Als JSON speichern";
+      ButtonSaveSubjects.UseVisualStyleBackColor = true;
+      ButtonSaveSubjects.Click += ButtonSaveSubjects_Click;
+      // 
+      // ButtonLoadSubjects
+      // 
+      ButtonLoadSubjects.Dock = DockStyle.Fill;
+      ButtonLoadSubjects.Location = new Point(3, 168);
+      ButtonLoadSubjects.Name = "ButtonLoadSubjects";
+      ButtonLoadSubjects.Size = new Size(151, 50);
+      ButtonLoadSubjects.TabIndex = 3;
+      ButtonLoadSubjects.Text = "Von JSON laden";
+      ButtonLoadSubjects.UseVisualStyleBackColor = true;
+      ButtonLoadSubjects.Click += ButtonLoadSubjects_Click;
+      // 
       // TableLayoutPanelStudents
       // 
       TableLayoutPanelStudents.ColumnCount = 2;
@@ -217,15 +238,14 @@
       TableLayoutPanelGeneralButtons.ColumnCount = 1;
       TableLayoutPanelGeneralButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       TableLayoutPanelGeneralButtons.Controls.Add(ButtonCreateTemplate, 0, 0);
-      TableLayoutPanelGeneralButtons.Controls.Add(ButtonLoadSelectionResults, 0, 1);
-      TableLayoutPanelGeneralButtons.Controls.Add(ButtonCancel, 0, 2);
+      TableLayoutPanelGeneralButtons.Controls.Add(ButtonCancel, 0, 1);
       TableLayoutPanelGeneralButtons.Location = new Point(1137, 3);
       TableLayoutPanelGeneralButtons.Name = "TableLayoutPanelGeneralButtons";
-      TableLayoutPanelGeneralButtons.RowCount = 3;
-      TableLayoutPanelGeneralButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      TableLayoutPanelGeneralButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      TableLayoutPanelGeneralButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-      TableLayoutPanelGeneralButtons.Size = new Size(120, 227);
+      TableLayoutPanelGeneralButtons.RowCount = 2;
+      TableLayoutPanelGeneralButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+      TableLayoutPanelGeneralButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+      TableLayoutPanelGeneralButtons.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+      TableLayoutPanelGeneralButtons.Size = new Size(120, 165);
       TableLayoutPanelGeneralButtons.TabIndex = 2;
       // 
       // ButtonCreateTemplate
@@ -233,55 +253,22 @@
       ButtonCreateTemplate.Dock = DockStyle.Fill;
       ButtonCreateTemplate.Location = new Point(3, 3);
       ButtonCreateTemplate.Name = "ButtonCreateTemplate";
-      ButtonCreateTemplate.Size = new Size(114, 69);
+      ButtonCreateTemplate.Size = new Size(114, 76);
       ButtonCreateTemplate.TabIndex = 0;
       ButtonCreateTemplate.Text = "Vorlage für die Einwahl generieren";
       ButtonCreateTemplate.UseVisualStyleBackColor = true;
       ButtonCreateTemplate.Click += ButtonCreateTemplate_Click;
       // 
-      // ButtonLoadSelectionResults
-      // 
-      ButtonLoadSelectionResults.Dock = DockStyle.Fill;
-      ButtonLoadSelectionResults.Location = new Point(3, 78);
-      ButtonLoadSelectionResults.Name = "ButtonLoadSelectionResults";
-      ButtonLoadSelectionResults.Size = new Size(114, 69);
-      ButtonLoadSelectionResults.TabIndex = 1;
-      ButtonLoadSelectionResults.Text = "Ergebnisse laden";
-      ButtonLoadSelectionResults.UseVisualStyleBackColor = true;
-      ButtonLoadSelectionResults.Click += ButtonLoadSelectionResults_Click;
-      // 
       // ButtonCancel
       // 
       ButtonCancel.Dock = DockStyle.Fill;
-      ButtonCancel.Location = new Point(3, 153);
+      ButtonCancel.Location = new Point(3, 85);
       ButtonCancel.Name = "ButtonCancel";
-      ButtonCancel.Size = new Size(114, 71);
+      ButtonCancel.Size = new Size(114, 77);
       ButtonCancel.TabIndex = 2;
       ButtonCancel.Text = "Abbrechen";
       ButtonCancel.UseVisualStyleBackColor = true;
       ButtonCancel.Click += ButtonCancel_Click;
-      // 
-      // ButtonSaveSubjects
-      // 
-      ButtonSaveSubjects.Dock = DockStyle.Fill;
-      ButtonSaveSubjects.Location = new Point(3, 113);
-      ButtonSaveSubjects.Name = "ButtonSaveSubjects";
-      ButtonSaveSubjects.Size = new Size(151, 49);
-      ButtonSaveSubjects.TabIndex = 2;
-      ButtonSaveSubjects.Text = "Als JSON speichern";
-      ButtonSaveSubjects.UseVisualStyleBackColor = true;
-      ButtonSaveSubjects.Click += ButtonSaveSubjects_Click;
-      // 
-      // ButtonLoadSubjects
-      // 
-      ButtonLoadSubjects.Dock = DockStyle.Fill;
-      ButtonLoadSubjects.Location = new Point(3, 168);
-      ButtonLoadSubjects.Name = "ButtonLoadSubjects";
-      ButtonLoadSubjects.Size = new Size(151, 50);
-      ButtonLoadSubjects.TabIndex = 3;
-      ButtonLoadSubjects.Text = "Von JSON laden";
-      ButtonLoadSubjects.UseVisualStyleBackColor = true;
-      ButtonLoadSubjects.Click += ButtonLoadSubjects_Click;
       // 
       // FormConfigurateTemplate
       // 
@@ -318,7 +305,6 @@
     private Button ButtonRemoveSubject;
     private TableLayoutPanel TableLayoutPanelGeneralButtons;
     private Button ButtonCreateTemplate;
-    private Button ButtonLoadSelectionResults;
     private Button ButtonCancel;
     private Button ButtonSaveSubjects;
     private Button ButtonLoadSubjects;
